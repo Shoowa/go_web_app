@@ -1,0 +1,12 @@
+wipe        = true # SQLBoiler re-creates the models
+no-tests    = true
+no-hooks    = true
+add-global-variants = true
+
+[psql]
+    blacklist   = ["schema_migrations"]
+    dbname      = "omni"
+    host        = "localhost"
+    port        = 60000
+    user        = "clerk"
+    schema      = "alpha"
