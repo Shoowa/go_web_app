@@ -24,7 +24,7 @@ func TestReadProducts(t *testing.T) {
 	c := DefineConfig()
 	db := c.Access()
 
-	catalog, _ := ReadProducts(db)
+	catalog, _ := ReadProducts(context.Background(), db)
 
 	for _, product := range catalog {
 		for _, item := range items {

@@ -35,7 +35,7 @@ type Env struct {
 }
 
 func (e *Env) readProducts(c *gin.Context) {
-	catalog, err := data.ReadProducts(e.db)
+	catalog, err := data.ReadProducts(c.Request.Context(), e.db)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "bad"})
 	}

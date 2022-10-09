@@ -18,8 +18,7 @@ type ProductIDAndPrice struct {
 
 type CatalogWithID []*ProductIDAndPrice
 
-func ReadProducts(db *sql.DB) (CatalogWithID, error) {
-	ctx := context.Background()
+func ReadProducts(creq context.Context, db *sql.DB) (CatalogWithID, error) {
 
 	now := time.Now()
 	var catalog CatalogWithID
@@ -29,7 +28,7 @@ func ReadProducts(db *sql.DB) (CatalogWithID, error) {
 		InnerJoin("prices ON prices.product_id = products.id"),
 		models.PriceWhere.Since.LT(now),
 		OrderBy("companies.name, products.sku, prices.since DESC"),
-	).Bind(ctx, db, &catalog)
+	).Bind(creq, db, &catalog)
 	fail(err)
 
 	return catalog, nil
