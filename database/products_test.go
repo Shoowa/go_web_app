@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"testing"
 	"time"
 )
@@ -19,11 +20,8 @@ var items = []stuff{
 }
 
 func TestReadProducts(t *testing.T) {
-	c := PostgresConfig{
-		Driver:     "pgx",
-		Connection: "user=clerk host=localhost port=60000 dbname=omni",
-	}
-	db := Open(c)
+	c := DefineConfig()
+	db := c.Access()
 
 	catalog, _ := ReadProducts(db)
 
@@ -35,6 +33,28 @@ func TestReadProducts(t *testing.T) {
 					t.Errorf("Appropriate price of %d not found on %q", item.price, now)
 				}
 			}
+		}
+	}
+
+}
+
+func TestReadProductsFromCompany(t *testing.T) {
+	c := DefineConfig()
+	db := c.Access()
+
+	catalog, _ := ReadProductsFromCompany(context.Background(), db, "Frenchy Laundering")
+
+	now := time.Now()
+	for _, product := range catalog {
+
+		// Cotton, 800 thread count, Yellow, Full-Size
+		if product.Sku == "C800YEL0F" {
+
+			if product.Price != 700 {
+				t.Errorf("Appropriate price of %d not found on %q", 700, now)
+			}
+
+			break
 		}
 	}
 

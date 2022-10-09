@@ -34,3 +34,30 @@ func ReadProducts(db *sql.DB) (CatalogWithID, error) {
 
 	return catalog, nil
 }
+
+type ProductAndPrice struct {
+	Company string `boil:"companies.name"`
+	Sku     string `boil:"products.sku"`
+	Price   int    `boil:"prices.price"`
+}
+
+type Catalog []*ProductAndPrice
+
+func ReadProductsFromCompany(creq context.Context, db *sql.DB, companyName string) (Catalog, error) {
+	now := time.Now()
+
+	var catalog Catalog
+	err := models.Products(
+		Select("DISTINCT ON (companies.name, products.sku) companies.name, products.sku, prices.price"),
+		InnerJoin("companies ON companies.id = products.company_id"),
+		InnerJoin("prices ON prices.product_id = products.id"),
+		models.CompanyWhere.Name.EQ(companyName),
+		models.PriceWhere.Since.LT(now),
+		OrderBy("companies.name, products.sku, prices.since DESC"),
+	).Bind(creq, db, &catalog)
+
+	if len(catalog) == 0 {
+		return nil, sql.ErrNoRows
+	}
+	return catalog, err
+}

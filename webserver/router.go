@@ -43,6 +43,18 @@ func (e *Env) readProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, catalog)
 }
 
+func (e *Env) readProductsFromCompany(c *gin.Context) {
+	name := c.Param("company")
+
+	catalog, err := data.ReadProductsFromCompany(c.Request.Context(), e.db, name)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "bad"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, catalog)
+}
+
 func NewRouter(db *sql.DB) *gin.Engine {
 	p := proxies()
 	env := &Env{db: db}
@@ -55,6 +67,7 @@ func NewRouter(db *sql.DB) *gin.Engine {
 	v0 := r.Group("/v0")
 	{
 		v0.GET("/products", env.readProducts)
+		v0.GET("/products/:company", env.readProductsFromCompany)
 
 	}
 
