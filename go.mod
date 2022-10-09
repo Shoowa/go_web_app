@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/friendsofgo/errors v0.9.2
+	github.com/go-playground/assert/v2 v2.0.1
 	github.com/jackc/pgx/v5 v5.0.1
 	github.com/volatiletech/null/v8 v8.1.2
 	github.com/volatiletech/sqlboiler/v4 v4.13.0

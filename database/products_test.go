@@ -3,7 +3,8 @@ package data
 import (
 	"context"
 	"testing"
-	"time"
+
+	"github.com/go-playground/assert/v2"
 )
 
 type stuff struct {
@@ -25,13 +26,10 @@ func TestReadProducts(t *testing.T) {
 
 	catalog, _ := ReadProducts(db)
 
-	now := time.Now()
 	for _, product := range catalog {
 		for _, item := range items {
 			if product.Company == item.company && product.Sku == item.sku {
-				if product.Price != item.price {
-					t.Errorf("Appropriate price of %d not found on %q", item.price, now)
-				}
+				assert.Equal(t, product.Price, item.price)
 			}
 		}
 	}
@@ -44,16 +42,11 @@ func TestReadProductsFromCompany(t *testing.T) {
 
 	catalog, _ := ReadProductsFromCompany(context.Background(), db, "Frenchy Laundering")
 
-	now := time.Now()
 	for _, product := range catalog {
 
 		// Cotton, 800 thread count, Yellow, Full-Size
 		if product.Sku == "C800YEL0F" {
-
-			if product.Price != 700 {
-				t.Errorf("Appropriate price of %d not found on %q", 700, now)
-			}
-
+			assert.Equal(t, product.Price, 700)
 			break
 		}
 	}
