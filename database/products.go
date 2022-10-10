@@ -56,7 +56,7 @@ func ReadProductsFromCompany(creq context.Context, db *sql.DB, companyName strin
 	).Bind(creq, db, &catalog)
 
 	if len(catalog) == 0 {
-		return nil, sql.ErrNoRows
+		return nil, nil
 	}
 	return catalog, err
 }

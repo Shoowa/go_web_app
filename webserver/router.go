@@ -52,6 +52,11 @@ func (e *Env) readProductsFromCompany(c *gin.Context) {
 		return
 	}
 
+	if catalog == nil {
+		c.Status(http.StatusNoContent)
+		return
+	}
+
 	c.IndentedJSON(http.StatusOK, catalog)
 }
 
