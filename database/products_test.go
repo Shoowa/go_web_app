@@ -52,3 +52,14 @@ func TestReadProductsFromCompany(t *testing.T) {
 	}
 
 }
+
+func TestFindProductsByCompanyId(t *testing.T) {
+	c := DefineConfig()
+	db := c.Access()
+
+	products, _ := FindProductsByCompanyId(context.Background(), db, 12)
+
+	for _, product := range products {
+		assert.Equal(t, product.CompanyID, 12)
+	}
+}

@@ -32,3 +32,29 @@ func (e *Env) ProductsFromCompanyGET(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, catalog)
 }
+
+type Identity struct {
+	ID int `uri:"id", binding:"required"`
+}
+
+func (e *Env) ProductsByCompanyIdGET(c *gin.Context) {
+	var input Identity
+	if err := c.ShouldBindUri(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	catalog, err := data.FindProductsByCompanyId(c.Request.Context(), e.db, input.ID)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "bad"})
+		return
+	}
+
+	if catalog == nil {
+		c.Status(http.StatusNoContent)
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, catalog)
+}

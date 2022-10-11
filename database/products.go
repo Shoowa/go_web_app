@@ -60,3 +60,15 @@ func ReadProductsFromCompany(creq context.Context, db *sql.DB, companyName strin
 	}
 	return catalog, err
 }
+
+func FindProductsByCompanyId(creq context.Context, db *sql.DB, companyID int) (models.ProductSlice, error) {
+	products, err := models.Products(
+		models.ProductWhere.CompanyID.EQ(companyID),
+	).All(creq, db)
+
+	if len(products) == 0 {
+		return nil, nil
+	}
+
+	return products, err
+}
