@@ -34,7 +34,7 @@ type Env struct {
 	db *sql.DB
 }
 
-func (e *Env) readProducts(c *gin.Context) {
+func (e *Env) ProductsGET(c *gin.Context) {
 	catalog, err := data.ReadProducts(c.Request.Context(), e.db)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "bad"})
@@ -43,7 +43,7 @@ func (e *Env) readProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, catalog)
 }
 
-func (e *Env) readProductsFromCompany(c *gin.Context) {
+func (e *Env) ProductsFromCompanyGET(c *gin.Context) {
 	name := c.Param("company")
 
 	catalog, err := data.ReadProductsFromCompany(c.Request.Context(), e.db, name)
@@ -71,8 +71,8 @@ func NewRouter(db *sql.DB) *gin.Engine {
 
 	v0 := r.Group("/v0")
 	{
-		v0.GET("/products", env.readProducts)
-		v0.GET("/products/:company", env.readProductsFromCompany)
+		v0.GET("/products", env.ProductsGET)
+		v0.GET("/products/:company", env.ProductsFromCompanyGET)
 
 	}
 
