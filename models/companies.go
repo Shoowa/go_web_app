@@ -369,8 +369,8 @@ type companyL struct{}
 
 var (
 	companyAllColumns            = []string{"id", "name", "email", "telephone", "ext", "street", "suite", "postal", "active", "state_id", "county_id", "muni_id", "struct_id", "created", "modified"}
-	companyColumnsWithoutDefault = []string{"name", "email", "telephone", "street", "postal", "active", "state_id", "county_id", "struct_id"}
-	companyColumnsWithDefault    = []string{"id", "ext", "suite", "muni_id", "created", "modified"}
+	companyColumnsWithoutDefault = []string{"name", "email", "telephone", "street", "postal", "state_id", "county_id", "struct_id"}
+	companyColumnsWithDefault    = []string{"id", "ext", "suite", "active", "muni_id", "created", "modified"}
 	companyPrimaryKeyColumns     = []string{"id"}
 	companyGeneratedColumns      = []string{"id"}
 )

@@ -196,8 +196,8 @@ type depotL struct{}
 
 var (
 	depotAllColumns            = []string{"id", "company_id", "internal_label", "active", "name", "street", "suite", "postal", "state_id", "county_id", "muni_id", "created"}
-	depotColumnsWithoutDefault = []string{"company_id", "active", "name", "street", "postal", "state_id", "county_id"}
-	depotColumnsWithDefault    = []string{"id", "internal_label", "suite", "muni_id", "created"}
+	depotColumnsWithoutDefault = []string{"company_id", "name", "street", "postal", "state_id", "county_id"}
+	depotColumnsWithDefault    = []string{"id", "internal_label", "active", "suite", "muni_id", "created"}
 	depotPrimaryKeyColumns     = []string{"id"}
 	depotGeneratedColumns      = []string{"id"}
 )

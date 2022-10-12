@@ -196,8 +196,8 @@ type brokerEmployeeL struct{}
 
 var (
 	brokerEmployeeAllColumns            = []string{"id", "email", "role_id", "title", "forename", "surname", "active", "created"}
-	brokerEmployeeColumnsWithoutDefault = []string{"email", "title", "forename", "surname", "active"}
-	brokerEmployeeColumnsWithDefault    = []string{"id", "role_id", "created"}
+	brokerEmployeeColumnsWithoutDefault = []string{"email", "title", "forename", "surname"}
+	brokerEmployeeColumnsWithDefault    = []string{"id", "role_id", "active", "created"}
 	brokerEmployeePrimaryKeyColumns     = []string{"id"}
 	brokerEmployeeGeneratedColumns      = []string{"id"}
 )

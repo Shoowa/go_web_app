@@ -214,8 +214,8 @@ type personL struct{}
 
 var (
 	personAllColumns            = []string{"id", "company_id", "email", "title", "forename", "surname", "agent", "active", "created"}
-	personColumnsWithoutDefault = []string{"company_id", "email", "title", "forename", "surname", "agent", "active"}
-	personColumnsWithDefault    = []string{"id", "created"}
+	personColumnsWithoutDefault = []string{"company_id", "email", "title", "forename", "surname", "agent"}
+	personColumnsWithDefault    = []string{"id", "active", "created"}
 	personPrimaryKeyColumns     = []string{"id"}
 	personGeneratedColumns      = []string{"id"}
 )

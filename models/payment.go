@@ -133,8 +133,8 @@ type paymentL struct{}
 
 var (
 	paymentAllColumns            = []string{"id", "office_id", "active", "acct", "routing", "created"}
-	paymentColumnsWithoutDefault = []string{"office_id", "active", "acct", "routing"}
-	paymentColumnsWithDefault    = []string{"id", "created"}
+	paymentColumnsWithoutDefault = []string{"office_id", "acct", "routing"}
+	paymentColumnsWithDefault    = []string{"id", "active", "created"}
 	paymentPrimaryKeyColumns     = []string{"id"}
 	paymentGeneratedColumns      = []string{"id"}
 )

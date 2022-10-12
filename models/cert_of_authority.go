@@ -140,8 +140,8 @@ type certOfAuthorityL struct{}
 
 var (
 	certOfAuthorityAllColumns            = []string{"id", "company_id", "active", "state_id", "number", "since", "created"}
-	certOfAuthorityColumnsWithoutDefault = []string{"company_id", "active", "state_id", "number", "since"}
-	certOfAuthorityColumnsWithDefault    = []string{"id", "created"}
+	certOfAuthorityColumnsWithoutDefault = []string{"company_id", "state_id", "number", "since"}
+	certOfAuthorityColumnsWithDefault    = []string{"id", "active", "created"}
 	certOfAuthorityPrimaryKeyColumns     = []string{"id"}
 	certOfAuthorityGeneratedColumns      = []string{"id"}
 )

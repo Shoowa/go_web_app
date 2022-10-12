@@ -196,8 +196,8 @@ type officeL struct{}
 
 var (
 	officeAllColumns            = []string{"id", "company_id", "internal_label", "active", "name", "street", "suite", "postal", "state_id", "county_id", "muni_id", "created"}
-	officeColumnsWithoutDefault = []string{"company_id", "active", "name", "street", "postal", "state_id", "county_id"}
-	officeColumnsWithDefault    = []string{"id", "internal_label", "suite", "muni_id", "created"}
+	officeColumnsWithoutDefault = []string{"company_id", "name", "street", "postal", "state_id", "county_id"}
+	officeColumnsWithDefault    = []string{"id", "internal_label", "active", "suite", "muni_id", "created"}
 	officePrimaryKeyColumns     = []string{"id"}
 	officeGeneratedColumns      = []string{"id"}
 )
