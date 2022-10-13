@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	data "github.com/Shoowa/broker.git/database"
+	"github.com/Shoowa/broker.git/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,4 +58,21 @@ func (e *Env) ProductsByCompanyIdGET(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, catalog)
+}
+
+func (e *Env) CreateProductPOST(c *gin.Context) {
+	var product models.Product
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := data.CreateProduct(c.Request.Context(), e.db, product)
+
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

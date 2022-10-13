@@ -1,8 +1,11 @@
 package webserver
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
+
+	data "github.com/Shoowa/broker.git/database"
 )
 
 func (suite *Routing) TestExistingProductsFromCompanyGET() {
@@ -35,4 +38,14 @@ func (suite *Routing) TestAbsentProductsByCompanyIdGET() {
 	suite.Router.ServeHTTP(w, req)
 
 	suite.Equal(http.StatusNoContent, w.Code)
+}
+
+func (suite *Routing) TestCreateProductPOST() {
+	payload := bytes.NewBuffer(data.RandomProductJSON())
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/v0/product", payload)
+	suite.Router.ServeHTTP(w, req)
+
+	suite.Equal(http.StatusOK, w.Code)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/Shoowa/broker.git/models"
 	"github.com/go-playground/assert/v2"
 )
 
@@ -62,4 +63,22 @@ func TestFindProductsByCompanyId(t *testing.T) {
 	for _, product := range products {
 		assert.Equal(t, product.CompanyID, 12)
 	}
+}
+
+func TestCreateProduct(t *testing.T) {
+	c := DefineConfig()
+	db := c.Access()
+
+	newProduct := randomProduct()
+	err := CreateProduct(context.Background(), db, newProduct)
+	assert.Equal(t, err, nil)
+
+	product, _ := models.Products(
+		models.ProductWhere.CompanyID.EQ(newProduct.CompanyID),
+		models.ProductWhere.Sku.EQ(newProduct.Sku),
+	).One(context.Background(), db)
+	defer product.Delete(context.Background(), db)
+
+	assert.Equal(t, product.Sku, newProduct.Sku)
+
 }

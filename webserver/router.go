@@ -47,7 +47,7 @@ func NewRouter(db *sql.DB) *gin.Engine {
 		v0.GET("/products", env.ProductsGET)
 		v0.GET("/products/:company", env.ProductsFromCompanyGET)
 		v0.GET("/productsco/:id", env.ProductsByCompanyIdGET)
-
+		v0.POST("/product", env.CreateProductPOST)
 	}
 
 	return r

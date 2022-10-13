@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Shoowa/broker.git/models"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	. "github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
@@ -71,4 +72,9 @@ func FindProductsByCompanyId(creq context.Context, db *sql.DB, companyID int) (m
 	}
 
 	return products, err
+}
+
+func CreateProduct(creq context.Context, db *sql.DB, product models.Product) error {
+	err := product.Insert(creq, db, boil.Infer())
+	return err
 }
