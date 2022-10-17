@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v9"
 )
 
 func proxies() []string {
@@ -30,12 +31,13 @@ func Health(c *gin.Context) {
 }
 
 type Env struct {
-	db *sql.DB
+	db    *sql.DB
+	cache *redis.Client
 }
 
-func NewRouter(db *sql.DB) *gin.Engine {
+func NewRouter(db *sql.DB, red *redis.Client) *gin.Engine {
 	p := proxies()
-	env := &Env{db: db}
+	env := &Env{db: db, cache: red}
 
 	r := gin.Default()
 	r.SetTrustedProxies(p)
