@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/Shoowa/broker.git/cache"
 	data "github.com/Shoowa/broker.git/database"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
@@ -18,7 +19,11 @@ type Routing struct {
 func (suite *Routing) SetupSuite() {
 	c := data.DefineConfig()
 	db := c.Access()
-	suite.Router = NewRouter(db)
+
+	red := cache.Setup()
+	redjson := cache.SetupRedisJSONClient(red)
+
+	suite.Router = NewRouter(db, red, redjson)
 }
 
 func TestRouting(t *testing.T) {

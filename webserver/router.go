@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v9"
+	"github.com/go-redis/redis/v8"
+	redisJSON "github.com/nitishm/go-rejson/v4"
 )
 
 func proxies() []string {
@@ -31,13 +32,18 @@ func Health(c *gin.Context) {
 }
 
 type Env struct {
-	db    *sql.DB
-	cache *redis.Client
+	db        *sql.DB
+	cache     *redis.Client
+	cacheJSON *redisJSON.Handler
 }
 
-func NewRouter(db *sql.DB, red *redis.Client) *gin.Engine {
+func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engine {
 	p := proxies()
-	env := &Env{db: db, cache: red}
+	env := &Env{
+		db:        db,
+		cache:     red,
+		cacheJSON: redj,
+	}
 
 	r := gin.Default()
 	r.SetTrustedProxies(p)

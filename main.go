@@ -12,7 +12,8 @@ func main() {
 	c := data.DefineConfig()
 	db := c.Access()
 	red := cache.Setup()
+	redjson := cache.SetupRedisJSONClient(red)
 
-	s := server.NewRouter(db, red)
+	s := server.NewRouter(db, red, redjson)
 	s.Run(":8080")
 }

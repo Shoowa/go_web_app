@@ -3,7 +3,8 @@ package cache
 import (
 	"os"
 
-	"github.com/go-redis/redis/v9"
+	"github.com/go-redis/redis/v8"
+	redisJSON "github.com/nitishm/go-rejson/v4"
 )
 
 func config() redis.Options {
@@ -30,4 +31,10 @@ func config() redis.Options {
 func Setup() *redis.Client {
 	c := config()
 	return redis.NewClient(&c)
+}
+
+func SetupRedisJSONClient(rdb *redis.Client) *redisJSON.Handler {
+	rjhandler := redisJSON.NewReJSONHandler()
+	rjhandler.SetGoRedisClient(rdb)
+	return rjhandler
 }
