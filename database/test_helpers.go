@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -53,6 +54,56 @@ func randomProduct() models.Product {
 
 func RandomProductJSON() []byte {
 	p := randomProduct()
+	payload, _ := json.Marshal(p)
+	return payload
+}
+
+func randomCompany() models.Company {
+	rand.Seed(time.Now().UnixMilli())
+	randomName := randomString(12, charset)
+
+	num := fmt.Sprintf("713-941-%d", rand.Intn(9999))
+	addr := fmt.Sprintf("%d Nothing St.", rand.Intn(999))
+	p := models.Company{
+		Name:      randomName,
+		Email:     "help@" + randomName + ".com",
+		Telephone: num,
+		Street:    addr,
+		Postal:    "77075",
+		StateID:   "TX",
+		CountyID:  1003,
+		MuniID:    null.IntFrom(2),
+		StructID:  2,
+	}
+
+	return p
+}
+
+func RandomCompanyJSON() []byte {
+	c := randomCompany()
+	payload, _ := json.Marshal(c)
+	return payload
+}
+
+func randomPerson() models.Person {
+	rand.Seed(time.Now().UnixMilli())
+	randomForename := randomString(6, charset)
+	randomSurname := randomString(12, charset)
+
+	p := models.Person{
+		CompanyID: rand.Intn(15),
+		Forename:  randomForename,
+		Surname:   randomSurname,
+		Email:     randomForename + "." + randomSurname + "@gmail.com",
+		Title:     "purchaser",
+		Agent:     true,
+	}
+
+	return p
+}
+
+func RandomPersonJSON() []byte {
+	p := randomPerson()
 	payload, _ := json.Marshal(p)
 	return payload
 }

@@ -21,9 +21,12 @@ var TableNames = struct {
 	DeliveryComplaints      string
 	DeliveryReasons         string
 	Depots                  string
+	Digests                 string
 	Discounts               string
+	Models                  string
 	Muni                    string
 	Offices                 string
+	Otp                     string
 	Pairings                string
 	Payment                 string
 	Persons                 string
@@ -61,9 +64,12 @@ var TableNames = struct {
 	DeliveryComplaints:      "delivery_complaints",
 	DeliveryReasons:         "delivery_reasons",
 	Depots:                  "depots",
+	Digests:                 "digests",
 	Discounts:               "discounts",
+	Models:                  "models",
 	Muni:                    "muni",
 	Offices:                 "offices",
+	Otp:                     "otp",
 	Pairings:                "pairings",
 	Payment:                 "payment",
 	Persons:                 "persons",

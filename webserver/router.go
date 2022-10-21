@@ -52,6 +52,16 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 
 	v0 := r.Group("/v0")
 	{
+		v0.POST(
+			"/signup",
+			env.MWreadSubmission,
+			env.MWregisterCompany,
+			env.MWfindCompanyID,
+			env.MWregisterPerson,
+			env.MWdigestPW,
+			env.MWregisterPWDigest,
+			env.SignupCompanyPOST,
+		)
 		v0.GET("/products", env.ProductsGET)
 		v0.GET("/products/:company", env.ProductsFromCompanyGET)
 		v0.GET("/productsco/:id", env.ProductsByCompanyIdGET)
