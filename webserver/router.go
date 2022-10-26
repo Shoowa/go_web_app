@@ -62,6 +62,14 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 			env.MWregisterPWDigest,
 			env.SignupCompanyPOST,
 		)
+		v0.POST(
+			"/otp",
+			env.MWreadEmail,
+			env.MWisEmailVerified,
+			env.MWdoYouHaveOTP,
+			env.MWcreateOTP,
+			env.MWshowOTP,
+		)
 		v0.GET("/products", env.ProductsGET)
 		v0.GET("/products/:company", env.ProductsFromCompanyGET)
 		v0.GET("/productsco/:id", env.ProductsByCompanyIdGET)
