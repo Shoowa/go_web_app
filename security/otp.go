@@ -6,6 +6,7 @@ import (
 	"image/png"
 
 	"github.com/pquerna/otp"
+	"github.com/pquerna/otp/totp"
 	timedPW "github.com/pquerna/otp/totp"
 )
 
@@ -28,4 +29,9 @@ func BufferQR(img image.Image) bytes.Buffer {
 	var buf bytes.Buffer
 	png.Encode(&buf, img)
 	return buf
+}
+
+func CheckCode(code string, secret string) bool {
+	valid := totp.Validate(code, secret)
+	return valid
 }

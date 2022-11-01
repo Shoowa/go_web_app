@@ -21,3 +21,8 @@ func OtpSecretExists(creq context.Context, db *sql.DB, email string) (bool, erro
 
 	return exist, err
 }
+
+func ReadOTP(creq context.Context, db *sql.DB, email string) (*models.Otp, error) {
+	OTPCode, err := models.FindOtp(creq, db, email)
+	return OTPCode, err
+}

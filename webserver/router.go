@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Shoowa/broker.git/security"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	"github.com/gorilla/sessions"
 	redisJSON "github.com/nitishm/go-rejson/v4"
 )
 
@@ -32,17 +34,20 @@ func Health(c *gin.Context) {
 }
 
 type Env struct {
-	db        *sql.DB
-	cache     *redis.Client
-	cacheJSON *redisJSON.Handler
+	db         *sql.DB
+	cache      *redis.Client
+	cacheJSON  *redisJSON.Handler
+	cookieShop *sessions.CookieStore
 }
 
 func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engine {
 	p := proxies()
+
 	env := &Env{
-		db:        db,
-		cache:     red,
-		cacheJSON: redj,
+		db:         db,
+		cache:      red,
+		cacheJSON:  redj,
+		cookieShop: security.SecureCookieStore(),
 	}
 
 	r := gin.Default()
@@ -69,6 +74,14 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 			env.MWdoYouHaveOTP,
 			env.MWcreateOTP,
 			env.MWshowOTP,
+		)
+		v0.POST(
+			"/login",
+			env.MWreadLoginRequest,
+			env.MWisEmailVerified,
+			env.MWcheckPW,
+			env.MWcheckOTP,
+			env.MWwriteSessionIntoRedis,
 		)
 		v0.GET("/products", env.ProductsGET)
 		v0.GET("/products/:company", env.ProductsFromCompanyGET)

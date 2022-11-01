@@ -23,3 +23,8 @@ func FindCompanyIDByName(creq context.Context, db *sql.DB, name string, state st
 
 	return company.ID, err
 }
+
+func FindCompanyById(creq context.Context, db *sql.DB, id int) (*models.Company, error) {
+	company, err := models.FindCompany(creq, db, id)
+	return company, err
+}
