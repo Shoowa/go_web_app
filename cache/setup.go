@@ -7,6 +7,8 @@ import (
 	redisJSON "github.com/nitishm/go-rejson/v4"
 )
 
+const dot = "."
+
 func config() redis.Options {
 	if os.Getenv("ENVIRON") == "dev" {
 		return redis.Options{
