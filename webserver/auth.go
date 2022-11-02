@@ -17,7 +17,12 @@ func (e *Env) AuthN(c *gin.Context) {
 	}
 
 	// Read a ticket stub from the client's session.
-	stub := session.Values["stub"].(string)
+	value, ok := session.Values["stub"]
+	if ok == false {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Access denied, because stub is missing."})
+		return
+	}
+	stub := value.(string)
 
 	// Do we have a record of that stub in the Redis cache?
 	exist, existErr := e.cache.Exists(c.Request.Context(), stub).Result()
