@@ -19,7 +19,7 @@ func (e *Env) AuthN(c *gin.Context) {
 	// Read a ticket stub from the client's session.
 	value, ok := session.Values["stub"]
 	if ok == false {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Access denied, because stub is missing."})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Access denied, because stub is missing."})
 		return
 	}
 	stub := value.(string)
@@ -34,7 +34,7 @@ func (e *Env) AuthN(c *gin.Context) {
 
 	// When we lack a record of that stub, deny access to the client.
 	if exist == 0 {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error:": "Denied!"})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error:": "Denied!"})
 		return
 	}
 
