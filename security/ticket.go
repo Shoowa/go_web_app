@@ -26,21 +26,22 @@ type Ticket struct {
 	Info SessionInfo
 }
 
-func (t *Ticket) Create(person *models.Person, company *models.Company) *Ticket {
+func CreateTicket(person *models.Person, company *models.Company) *Ticket {
 
-	// add UUID
-	t.Stub = uuid.New()
+	info := SessionInfo{
+		Email:     person.Email,
+		ID:        person.ID,
+		CompanyID: person.CompanyID,
+		Agent:     person.Agent,
+		StateID:   company.StateID,
+		CountyID:  company.CountyID,
+		MuniID:    company.MuniID,
+	}
 
-	// add employee data
-	t.Info.Email = person.Email
-	t.Info.ID = person.ID
-	t.Info.CompanyID = person.CompanyID
-	t.Info.Agent = person.Agent
-
-	// add company data
-	t.Info.StateID = company.StateID
-	t.Info.CountyID = company.CountyID
-	t.Info.MuniID = company.MuniID
+	t := &Ticket{
+		Stub: uuid.New(),
+		Info: info,
+	}
 
 	return t
 }

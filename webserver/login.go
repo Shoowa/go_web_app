@@ -97,7 +97,7 @@ func (e *Env) MWwriteSessionIntoRedis(c *gin.Context) {
 		return
 	}
 
-	ticket := new(security.Ticket).Create(person, company)
+	ticket := security.CreateTicket(person, company)
 
 	// Save Ticket.Info in RedisJSON
 	status, rjErr := e.cacheJSON.JSONSet(ticket.Stub.String(), ".", ticket.Info)
