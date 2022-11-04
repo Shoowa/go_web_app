@@ -16,3 +16,14 @@ func ReadSessionEmail(rj *redisJSON.Handler, stub string) (*string, error) {
 	json.Unmarshal(b.([]byte), &info)
 	return &info, err
 }
+
+func ReadSessionForename(rj *redisJSON.Handler, stub string) (*string, error) {
+	b, err := rj.JSONGet(stub, dot+"forename")
+	if err != nil {
+		return nil, err
+	}
+
+	var info string
+	json.Unmarshal(b.([]byte), &info)
+	return &info, err
+}

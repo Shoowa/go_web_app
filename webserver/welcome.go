@@ -11,12 +11,12 @@ import (
 func (e *Env) WelcomeGET(c *gin.Context) {
 	stub := c.GetString("stub")
 
-	email, err := cache.ReadSessionEmail(e.cacheJSON, stub)
+	forename, err := cache.ReadSessionForename(e.cacheJSON, stub)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	msg := fmt.Sprintf("Hi, %s!", *email)
+	msg := fmt.Sprintf("Hi, %s!", *forename)
 	c.JSON(http.StatusOK, gin.H{"msg": msg})
 }

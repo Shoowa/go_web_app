@@ -19,6 +19,7 @@ type SessionInfo struct {
 	StateID   string   `json:"state_id" binding:"required"`
 	CountyID  int      `json:"county_id" binding:"required"`
 	MuniID    null.Int `json:"muni_id" binding:"required"`
+	Forename  string   `json:"forename" binding:"required"`
 }
 
 type Ticket struct {
@@ -36,6 +37,7 @@ func CreateTicket(person *models.Person, company *models.Company) *Ticket {
 		StateID:   company.StateID,
 		CountyID:  company.CountyID,
 		MuniID:    company.MuniID,
+		Forename:  person.Forename,
 	}
 
 	t := &Ticket{
