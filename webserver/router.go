@@ -97,6 +97,7 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 		v0.GET("/products/:company", env.ProductsFromCompanyGET)
 		v0.GET("/productsco/:id", env.ProductsByCompanyIdGET)
 		v0.POST("/product", env.CreateProductPOST)
+		v0.GET("/myproducts", env.AuthN, env.MyProductsGET)
 	}
 
 	return r

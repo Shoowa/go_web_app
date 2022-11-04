@@ -3,6 +3,7 @@ package webserver
 import (
 	"net/http"
 
+	"github.com/Shoowa/broker.git/cache"
 	data "github.com/Shoowa/broker.git/database"
 	"github.com/Shoowa/broker.git/models"
 	"github.com/gin-gonic/gin"
@@ -75,4 +76,27 @@ func (e *Env) CreateProductPOST(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func (e *Env) MyProductsGET(c *gin.Context) {
+	stub := c.GetString("stub")
+
+	myCompany, cacheErr := cache.ReadSessionCompany(e.cacheJSON, stub)
+	if cacheErr != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": cacheErr.Error()})
+		return
+	}
+
+	catalog, dbErr := data.FindProductsByCompanyId(c.Request.Context(), e.db, *myCompany)
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
+		return
+	}
+
+	if catalog == nil {
+		c.JSON(http.StatusNoContent, gin.H{"msg": "No items listed."})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, catalog)
 }
