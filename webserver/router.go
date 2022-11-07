@@ -86,14 +86,8 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 
 		authn := v0.Group("/au", env.AuthN)
 
-		authn.GET(
-			"/welcome",
-			env.WelcomeGET,
-		)
-		authn.DELETE(
-			"/logout",
-			env.SessionDEL,
-		)
+		authn.GET("/welcome", env.WelcomeGET)
+		authn.DELETE("/logout", env.SessionDEL)
 		authn.GET("/products", env.ProductsGET)
 		authn.GET("/products/:company", env.ProductsFromCompanyGET)
 		authn.GET("/productsco/:id", env.ProductsByCompanyIdGET)
