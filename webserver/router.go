@@ -83,21 +83,22 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 			env.MWcheckOTP,
 			env.MWwriteSessionIntoRedis,
 		)
-		v0.GET(
+
+		authn := v0.Group("/au", env.AuthN)
+
+		authn.GET(
 			"/welcome",
-			env.AuthN,
 			env.WelcomeGET,
 		)
-		v0.DELETE(
+		authn.DELETE(
 			"/logout",
-			env.AuthN,
 			env.SessionDEL,
 		)
-		v0.GET("/products", env.ProductsGET)
-		v0.GET("/products/:company", env.ProductsFromCompanyGET)
-		v0.GET("/productsco/:id", env.ProductsByCompanyIdGET)
-		v0.POST("/product", env.CreateProductPOST)
-		v0.GET("/myproducts", env.AuthN, env.MyProductsGET)
+		authn.GET("/products", env.ProductsGET)
+		authn.GET("/products/:company", env.ProductsFromCompanyGET)
+		authn.GET("/productsco/:id", env.ProductsByCompanyIdGET)
+		authn.POST("/product", env.CreateProductPOST)
+		authn.GET("/myproducts", env.MyProductsGET)
 	}
 
 	return r
