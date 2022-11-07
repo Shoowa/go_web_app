@@ -59,13 +59,13 @@ var CategoryWhere = struct {
 // CategoryRels is where relationship names are stored.
 var CategoryRels = struct {
 	CommissionItems string
-	Products        string
+	Models          string
 	TaxCounties     string
 	TaxMunis        string
 	TaxStates       string
 }{
 	CommissionItems: "CommissionItems",
-	Products:        "Products",
+	Models:          "Models",
 	TaxCounties:     "TaxCounties",
 	TaxMunis:        "TaxMunis",
 	TaxStates:       "TaxStates",
@@ -74,7 +74,7 @@ var CategoryRels = struct {
 // categoryR is where relationships are stored.
 type categoryR struct {
 	CommissionItems CommissionItemSlice `boil:"CommissionItems" json:"CommissionItems" toml:"CommissionItems" yaml:"CommissionItems"`
-	Products        ProductSlice        `boil:"Products" json:"Products" toml:"Products" yaml:"Products"`
+	Models          ModelSlice          `boil:"Models" json:"Models" toml:"Models" yaml:"Models"`
 	TaxCounties     TaxCountySlice      `boil:"TaxCounties" json:"TaxCounties" toml:"TaxCounties" yaml:"TaxCounties"`
 	TaxMunis        TaxMuniSlice        `boil:"TaxMunis" json:"TaxMunis" toml:"TaxMunis" yaml:"TaxMunis"`
 	TaxStates       TaxStateSlice       `boil:"TaxStates" json:"TaxStates" toml:"TaxStates" yaml:"TaxStates"`
@@ -92,11 +92,11 @@ func (r *categoryR) GetCommissionItems() CommissionItemSlice {
 	return r.CommissionItems
 }
 
-func (r *categoryR) GetProducts() ProductSlice {
+func (r *categoryR) GetModels() ModelSlice {
 	if r == nil {
 		return nil
 	}
-	return r.Products
+	return r.Models
 }
 
 func (r *categoryR) GetTaxCounties() TaxCountySlice {
@@ -256,18 +256,18 @@ func (o *Category) CommissionItems(mods ...qm.QueryMod) commissionItemQuery {
 	return CommissionItems(queryMods...)
 }
 
-// Products retrieves all the product's Products with an executor.
-func (o *Category) Products(mods ...qm.QueryMod) productQuery {
+// Models retrieves all the model's Models with an executor.
+func (o *Category) Models(mods ...qm.QueryMod) modelQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"alpha\".\"products\".\"category_id\"=?", o.ID),
+		qm.Where("\"alpha\".\"models\".\"category_id\"=?", o.ID),
 	)
 
-	return Products(queryMods...)
+	return Models(queryMods...)
 }
 
 // TaxCounties retrieves all the tax_county's TaxCounties with an executor.
@@ -419,9 +419,9 @@ func (categoryL) LoadCommissionItems(ctx context.Context, e boil.ContextExecutor
 	return nil
 }
 
-// LoadProducts allows an eager lookup of values, cached into the
+// LoadModels allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (categoryL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCategory interface{}, mods queries.Applicator) error {
+func (categoryL) LoadModels(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCategory interface{}, mods queries.Applicator) error {
 	var slice []*Category
 	var object *Category
 
@@ -475,8 +475,8 @@ func (categoryL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singu
 	}
 
 	query := NewQuery(
-		qm.From(`alpha.products`),
-		qm.WhereIn(`alpha.products.category_id in ?`, args...),
+		qm.From(`alpha.models`),
+		qm.WhereIn(`alpha.models.category_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -484,26 +484,26 @@ func (categoryL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singu
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load products")
+		return errors.Wrap(err, "failed to eager load models")
 	}
 
-	var resultSlice []*Product
+	var resultSlice []*Model
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice products")
+		return errors.Wrap(err, "failed to bind eager loaded slice models")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on products")
+		return errors.Wrap(err, "failed to close results in eager load on models")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for products")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for models")
 	}
 
 	if singular {
-		object.R.Products = resultSlice
+		object.R.Models = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &productR{}
+				foreign.R = &modelR{}
 			}
 			foreign.R.Category = object
 		}
@@ -513,9 +513,9 @@ func (categoryL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singu
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.ID == foreign.CategoryID {
-				local.R.Products = append(local.R.Products, foreign)
+				local.R.Models = append(local.R.Models, foreign)
 				if foreign.R == nil {
-					foreign.R = &productR{}
+					foreign.R = &modelR{}
 				}
 				foreign.R.Category = local
 				break
@@ -909,20 +909,20 @@ func (o *Category) AddCommissionItems(ctx context.Context, exec boil.ContextExec
 	return nil
 }
 
-// AddProductsG adds the given related objects to the existing relationships
+// AddModelsG adds the given related objects to the existing relationships
 // of the category, optionally inserting them as new records.
-// Appends related to o.R.Products.
+// Appends related to o.R.Models.
 // Sets related.R.Category appropriately.
 // Uses the global database handle.
-func (o *Category) AddProductsG(ctx context.Context, insert bool, related ...*Product) error {
-	return o.AddProducts(ctx, boil.GetContextDB(), insert, related...)
+func (o *Category) AddModelsG(ctx context.Context, insert bool, related ...*Model) error {
+	return o.AddModels(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// AddProducts adds the given related objects to the existing relationships
+// AddModels adds the given related objects to the existing relationships
 // of the category, optionally inserting them as new records.
-// Appends related to o.R.Products.
+// Appends related to o.R.Models.
 // Sets related.R.Category appropriately.
-func (o *Category) AddProducts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Product) error {
+func (o *Category) AddModels(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Model) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -932,9 +932,9 @@ func (o *Category) AddProducts(ctx context.Context, exec boil.ContextExecutor, i
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
+				"UPDATE \"alpha\".\"models\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"category_id"}),
-				strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, modelPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -953,15 +953,15 @@ func (o *Category) AddProducts(ctx context.Context, exec boil.ContextExecutor, i
 
 	if o.R == nil {
 		o.R = &categoryR{
-			Products: related,
+			Models: related,
 		}
 	} else {
-		o.R.Products = append(o.R.Products, related...)
+		o.R.Models = append(o.R.Models, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &productR{
+			rel.R = &modelR{
 				Category: o,
 			}
 		} else {

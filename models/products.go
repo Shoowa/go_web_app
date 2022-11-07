@@ -27,11 +27,10 @@ type Product struct {
 	ID         int       `boil:"id" json:"id" toml:"id" yaml:"id"`
 	CompanyID  int       `boil:"company_id" json:"company_id" toml:"company_id" yaml:"company_id"`
 	Sku        string    `boil:"sku" json:"sku" toml:"sku" yaml:"sku"`
+	ModelID    int       `boil:"model_id" json:"model_id" toml:"model_id" yaml:"model_id"`
 	Traits     null.JSON `boil:"traits" json:"traits,omitempty" toml:"traits" yaml:"traits,omitempty"`
-	CommonID   int       `boil:"common_id" json:"common_id" toml:"common_id" yaml:"common_id"`
-	CategoryID int       `boil:"category_id" json:"category_id" toml:"category_id" yaml:"category_id"`
-	BrandID    null.Int  `boil:"brand_id" json:"brand_id,omitempty" toml:"brand_id" yaml:"brand_id,omitempty"`
 	Returnable bool      `boil:"returnable" json:"returnable" toml:"returnable" yaml:"returnable"`
+	Active     bool      `boil:"active" json:"active" toml:"active" yaml:"active"`
 
 	R *productR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L productL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -41,94 +40,62 @@ var ProductColumns = struct {
 	ID         string
 	CompanyID  string
 	Sku        string
+	ModelID    string
 	Traits     string
-	CommonID   string
-	CategoryID string
-	BrandID    string
 	Returnable string
+	Active     string
 }{
 	ID:         "id",
 	CompanyID:  "company_id",
 	Sku:        "sku",
+	ModelID:    "model_id",
 	Traits:     "traits",
-	CommonID:   "common_id",
-	CategoryID: "category_id",
-	BrandID:    "brand_id",
 	Returnable: "returnable",
+	Active:     "active",
 }
 
 var ProductTableColumns = struct {
 	ID         string
 	CompanyID  string
 	Sku        string
+	ModelID    string
 	Traits     string
-	CommonID   string
-	CategoryID string
-	BrandID    string
 	Returnable string
+	Active     string
 }{
 	ID:         "products.id",
 	CompanyID:  "products.company_id",
 	Sku:        "products.sku",
+	ModelID:    "products.model_id",
 	Traits:     "products.traits",
-	CommonID:   "products.common_id",
-	CategoryID: "products.category_id",
-	BrandID:    "products.brand_id",
 	Returnable: "products.returnable",
+	Active:     "products.active",
 }
 
 // Generated where
-
-type whereHelpernull_JSON struct{ field string }
-
-func (w whereHelpernull_JSON) EQ(x null.JSON) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_JSON) NEQ(x null.JSON) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_JSON) LT(x null.JSON) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_JSON) LTE(x null.JSON) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_JSON) GT(x null.JSON) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_JSON) GTE(x null.JSON) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
-func (w whereHelpernull_JSON) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_JSON) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var ProductWhere = struct {
 	ID         whereHelperint
 	CompanyID  whereHelperint
 	Sku        whereHelperstring
+	ModelID    whereHelperint
 	Traits     whereHelpernull_JSON
-	CommonID   whereHelperint
-	CategoryID whereHelperint
-	BrandID    whereHelpernull_Int
 	Returnable whereHelperbool
+	Active     whereHelperbool
 }{
 	ID:         whereHelperint{field: "\"alpha\".\"products\".\"id\""},
 	CompanyID:  whereHelperint{field: "\"alpha\".\"products\".\"company_id\""},
 	Sku:        whereHelperstring{field: "\"alpha\".\"products\".\"sku\""},
+	ModelID:    whereHelperint{field: "\"alpha\".\"products\".\"model_id\""},
 	Traits:     whereHelpernull_JSON{field: "\"alpha\".\"products\".\"traits\""},
-	CommonID:   whereHelperint{field: "\"alpha\".\"products\".\"common_id\""},
-	CategoryID: whereHelperint{field: "\"alpha\".\"products\".\"category_id\""},
-	BrandID:    whereHelpernull_Int{field: "\"alpha\".\"products\".\"brand_id\""},
 	Returnable: whereHelperbool{field: "\"alpha\".\"products\".\"returnable\""},
+	Active:     whereHelperbool{field: "\"alpha\".\"products\".\"active\""},
 }
 
 // ProductRels is where relationship names are stored.
 var ProductRels = struct {
-	Brand              string
-	Category           string
-	Common             string
 	Company            string
+	Model              string
 	DeliveryComplaints string
 	Discounts          string
 	Prices             string
@@ -136,10 +103,8 @@ var ProductRels = struct {
 	SalesorderItems    string
 	Stocks             string
 }{
-	Brand:              "Brand",
-	Category:           "Category",
-	Common:             "Common",
 	Company:            "Company",
+	Model:              "Model",
 	DeliveryComplaints: "DeliveryComplaints",
 	Discounts:          "Discounts",
 	Prices:             "Prices",
@@ -150,10 +115,8 @@ var ProductRels = struct {
 
 // productR is where relationships are stored.
 type productR struct {
-	Brand              *Brand                 `boil:"Brand" json:"Brand" toml:"Brand" yaml:"Brand"`
-	Category           *Category              `boil:"Category" json:"Category" toml:"Category" yaml:"Category"`
-	Common             *Common                `boil:"Common" json:"Common" toml:"Common" yaml:"Common"`
 	Company            *Company               `boil:"Company" json:"Company" toml:"Company" yaml:"Company"`
+	Model              *Model                 `boil:"Model" json:"Model" toml:"Model" yaml:"Model"`
 	DeliveryComplaints DeliveryComplaintSlice `boil:"DeliveryComplaints" json:"DeliveryComplaints" toml:"DeliveryComplaints" yaml:"DeliveryComplaints"`
 	Discounts          DiscountSlice          `boil:"Discounts" json:"Discounts" toml:"Discounts" yaml:"Discounts"`
 	Prices             PriceSlice             `boil:"Prices" json:"Prices" toml:"Prices" yaml:"Prices"`
@@ -167,32 +130,18 @@ func (*productR) NewStruct() *productR {
 	return &productR{}
 }
 
-func (r *productR) GetBrand() *Brand {
-	if r == nil {
-		return nil
-	}
-	return r.Brand
-}
-
-func (r *productR) GetCategory() *Category {
-	if r == nil {
-		return nil
-	}
-	return r.Category
-}
-
-func (r *productR) GetCommon() *Common {
-	if r == nil {
-		return nil
-	}
-	return r.Common
-}
-
 func (r *productR) GetCompany() *Company {
 	if r == nil {
 		return nil
 	}
 	return r.Company
+}
+
+func (r *productR) GetModel() *Model {
+	if r == nil {
+		return nil
+	}
+	return r.Model
 }
 
 func (r *productR) GetDeliveryComplaints() DeliveryComplaintSlice {
@@ -241,9 +190,9 @@ func (r *productR) GetStocks() StockSlice {
 type productL struct{}
 
 var (
-	productAllColumns            = []string{"id", "company_id", "sku", "traits", "common_id", "category_id", "brand_id", "returnable"}
-	productColumnsWithoutDefault = []string{"company_id", "sku", "common_id", "category_id", "returnable"}
-	productColumnsWithDefault    = []string{"id", "traits", "brand_id"}
+	productAllColumns            = []string{"id", "company_id", "sku", "model_id", "traits", "returnable", "active"}
+	productColumnsWithoutDefault = []string{"company_id", "sku", "model_id"}
+	productColumnsWithDefault    = []string{"id", "traits", "returnable", "active"}
 	productPrimaryKeyColumns     = []string{"id"}
 	productGeneratedColumns      = []string{"id"}
 )
@@ -359,39 +308,6 @@ func (q productQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bo
 	return count > 0, nil
 }
 
-// Brand pointed to by the foreign key.
-func (o *Product) Brand(mods ...qm.QueryMod) brandQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.BrandID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Brands(queryMods...)
-}
-
-// Category pointed to by the foreign key.
-func (o *Product) Category(mods ...qm.QueryMod) categoryQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.CategoryID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Categories(queryMods...)
-}
-
-// Common pointed to by the foreign key.
-func (o *Product) Common(mods ...qm.QueryMod) commonQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.CommonID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	return Commons(queryMods...)
-}
-
 // Company pointed to by the foreign key.
 func (o *Product) Company(mods ...qm.QueryMod) companyQuery {
 	queryMods := []qm.QueryMod{
@@ -401,6 +317,17 @@ func (o *Product) Company(mods ...qm.QueryMod) companyQuery {
 	queryMods = append(queryMods, mods...)
 
 	return Companies(queryMods...)
+}
+
+// Model pointed to by the foreign key.
+func (o *Product) Model(mods ...qm.QueryMod) modelQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"id\" = ?", o.ModelID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	return Models(queryMods...)
 }
 
 // DeliveryComplaints retrieves all the delivery_complaint's DeliveryComplaints with an executor.
@@ -485,346 +412,6 @@ func (o *Product) Stocks(mods ...qm.QueryMod) stockQuery {
 	)
 
 	return Stocks(queryMods...)
-}
-
-// LoadBrand allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (productL) LoadBrand(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProduct interface{}, mods queries.Applicator) error {
-	var slice []*Product
-	var object *Product
-
-	if singular {
-		var ok bool
-		object, ok = maybeProduct.(*Product)
-		if !ok {
-			object = new(Product)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeProduct)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProduct))
-			}
-		}
-	} else {
-		s, ok := maybeProduct.(*[]*Product)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeProduct)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProduct))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &productR{}
-		}
-		if !queries.IsNil(object.BrandID) {
-			args = append(args, object.BrandID)
-		}
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &productR{}
-			}
-
-			for _, a := range args {
-				if queries.Equal(a, obj.BrandID) {
-					continue Outer
-				}
-			}
-
-			if !queries.IsNil(obj.BrandID) {
-				args = append(args, obj.BrandID)
-			}
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`alpha.brands`),
-		qm.WhereIn(`alpha.brands.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Brand")
-	}
-
-	var resultSlice []*Brand
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Brand")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for brands")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for brands")
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Brand = foreign
-		if foreign.R == nil {
-			foreign.R = &brandR{}
-		}
-		foreign.R.Products = append(foreign.R.Products, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if queries.Equal(local.BrandID, foreign.ID) {
-				local.R.Brand = foreign
-				if foreign.R == nil {
-					foreign.R = &brandR{}
-				}
-				foreign.R.Products = append(foreign.R.Products, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadCategory allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (productL) LoadCategory(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProduct interface{}, mods queries.Applicator) error {
-	var slice []*Product
-	var object *Product
-
-	if singular {
-		var ok bool
-		object, ok = maybeProduct.(*Product)
-		if !ok {
-			object = new(Product)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeProduct)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProduct))
-			}
-		}
-	} else {
-		s, ok := maybeProduct.(*[]*Product)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeProduct)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProduct))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &productR{}
-		}
-		args = append(args, object.CategoryID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &productR{}
-			}
-
-			for _, a := range args {
-				if a == obj.CategoryID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.CategoryID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`alpha.categories`),
-		qm.WhereIn(`alpha.categories.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Category")
-	}
-
-	var resultSlice []*Category
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Category")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for categories")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for categories")
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Category = foreign
-		if foreign.R == nil {
-			foreign.R = &categoryR{}
-		}
-		foreign.R.Products = append(foreign.R.Products, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.CategoryID == foreign.ID {
-				local.R.Category = foreign
-				if foreign.R == nil {
-					foreign.R = &categoryR{}
-				}
-				foreign.R.Products = append(foreign.R.Products, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadCommon allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (productL) LoadCommon(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProduct interface{}, mods queries.Applicator) error {
-	var slice []*Product
-	var object *Product
-
-	if singular {
-		var ok bool
-		object, ok = maybeProduct.(*Product)
-		if !ok {
-			object = new(Product)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeProduct)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProduct))
-			}
-		}
-	} else {
-		s, ok := maybeProduct.(*[]*Product)
-		if ok {
-			slice = *s
-		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeProduct)
-			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProduct))
-			}
-		}
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &productR{}
-		}
-		args = append(args, object.CommonID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &productR{}
-			}
-
-			for _, a := range args {
-				if a == obj.CommonID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.CommonID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`alpha.common`),
-		qm.WhereIn(`alpha.common.id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Common")
-	}
-
-	var resultSlice []*Common
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Common")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for common")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for common")
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Common = foreign
-		if foreign.R == nil {
-			foreign.R = &commonR{}
-		}
-		foreign.R.Products = append(foreign.R.Products, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.CommonID == foreign.ID {
-				local.R.Common = foreign
-				if foreign.R == nil {
-					foreign.R = &commonR{}
-				}
-				foreign.R.Products = append(foreign.R.Products, local)
-				break
-			}
-		}
-	}
-
-	return nil
 }
 
 // LoadCompany allows an eager lookup of values, cached into the
@@ -929,6 +516,118 @@ func (productL) LoadCompany(ctx context.Context, e boil.ContextExecutor, singula
 				local.R.Company = foreign
 				if foreign.R == nil {
 					foreign.R = &companyR{}
+				}
+				foreign.R.Products = append(foreign.R.Products, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadModel allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (productL) LoadModel(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProduct interface{}, mods queries.Applicator) error {
+	var slice []*Product
+	var object *Product
+
+	if singular {
+		var ok bool
+		object, ok = maybeProduct.(*Product)
+		if !ok {
+			object = new(Product)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeProduct)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeProduct))
+			}
+		}
+	} else {
+		s, ok := maybeProduct.(*[]*Product)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeProduct)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeProduct))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &productR{}
+		}
+		args = append(args, object.ModelID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &productR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ModelID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ModelID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`alpha.models`),
+		qm.WhereIn(`alpha.models.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Model")
+	}
+
+	var resultSlice []*Model
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Model")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for models")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for models")
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Model = foreign
+		if foreign.R == nil {
+			foreign.R = &modelR{}
+		}
+		foreign.R.Products = append(foreign.R.Products, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.ModelID == foreign.ID {
+				local.R.Model = foreign
+				if foreign.R == nil {
+					foreign.R = &modelR{}
 				}
 				foreign.R.Products = append(foreign.R.Products, local)
 				break
@@ -1581,212 +1280,6 @@ func (productL) LoadStocks(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
-// SetBrandG of the product to the related item.
-// Sets o.R.Brand to related.
-// Adds o to related.R.Products.
-// Uses the global database handle.
-func (o *Product) SetBrandG(ctx context.Context, insert bool, related *Brand) error {
-	return o.SetBrand(ctx, boil.GetContextDB(), insert, related)
-}
-
-// SetBrand of the product to the related item.
-// Sets o.R.Brand to related.
-// Adds o to related.R.Products.
-func (o *Product) SetBrand(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Brand) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"brand_id"}),
-		strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	queries.Assign(&o.BrandID, related.ID)
-	if o.R == nil {
-		o.R = &productR{
-			Brand: related,
-		}
-	} else {
-		o.R.Brand = related
-	}
-
-	if related.R == nil {
-		related.R = &brandR{
-			Products: ProductSlice{o},
-		}
-	} else {
-		related.R.Products = append(related.R.Products, o)
-	}
-
-	return nil
-}
-
-// RemoveBrandG relationship.
-// Sets o.R.Brand to nil.
-// Removes o from all passed in related items' relationships struct.
-// Uses the global database handle.
-func (o *Product) RemoveBrandG(ctx context.Context, related *Brand) error {
-	return o.RemoveBrand(ctx, boil.GetContextDB(), related)
-}
-
-// RemoveBrand relationship.
-// Sets o.R.Brand to nil.
-// Removes o from all passed in related items' relationships struct.
-func (o *Product) RemoveBrand(ctx context.Context, exec boil.ContextExecutor, related *Brand) error {
-	var err error
-
-	queries.SetScanner(&o.BrandID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("brand_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	if o.R != nil {
-		o.R.Brand = nil
-	}
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.Products {
-		if queries.Equal(o.BrandID, ri.BrandID) {
-			continue
-		}
-
-		ln := len(related.R.Products)
-		if ln > 1 && i < ln-1 {
-			related.R.Products[i] = related.R.Products[ln-1]
-		}
-		related.R.Products = related.R.Products[:ln-1]
-		break
-	}
-	return nil
-}
-
-// SetCategoryG of the product to the related item.
-// Sets o.R.Category to related.
-// Adds o to related.R.Products.
-// Uses the global database handle.
-func (o *Product) SetCategoryG(ctx context.Context, insert bool, related *Category) error {
-	return o.SetCategory(ctx, boil.GetContextDB(), insert, related)
-}
-
-// SetCategory of the product to the related item.
-// Sets o.R.Category to related.
-// Adds o to related.R.Products.
-func (o *Product) SetCategory(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Category) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"category_id"}),
-		strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.CategoryID = related.ID
-	if o.R == nil {
-		o.R = &productR{
-			Category: related,
-		}
-	} else {
-		o.R.Category = related
-	}
-
-	if related.R == nil {
-		related.R = &categoryR{
-			Products: ProductSlice{o},
-		}
-	} else {
-		related.R.Products = append(related.R.Products, o)
-	}
-
-	return nil
-}
-
-// SetCommonG of the product to the related item.
-// Sets o.R.Common to related.
-// Adds o to related.R.Products.
-// Uses the global database handle.
-func (o *Product) SetCommonG(ctx context.Context, insert bool, related *Common) error {
-	return o.SetCommon(ctx, boil.GetContextDB(), insert, related)
-}
-
-// SetCommon of the product to the related item.
-// Sets o.R.Common to related.
-// Adds o to related.R.Products.
-func (o *Product) SetCommon(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Common) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"common_id"}),
-		strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.CommonID = related.ID
-	if o.R == nil {
-		o.R = &productR{
-			Common: related,
-		}
-	} else {
-		o.R.Common = related
-	}
-
-	if related.R == nil {
-		related.R = &commonR{
-			Products: ProductSlice{o},
-		}
-	} else {
-		related.R.Products = append(related.R.Products, o)
-	}
-
-	return nil
-}
-
 // SetCompanyG of the product to the related item.
 // Sets o.R.Company to related.
 // Adds o to related.R.Products.
@@ -1833,6 +1326,61 @@ func (o *Product) SetCompany(ctx context.Context, exec boil.ContextExecutor, ins
 
 	if related.R == nil {
 		related.R = &companyR{
+			Products: ProductSlice{o},
+		}
+	} else {
+		related.R.Products = append(related.R.Products, o)
+	}
+
+	return nil
+}
+
+// SetModelG of the product to the related item.
+// Sets o.R.Model to related.
+// Adds o to related.R.Products.
+// Uses the global database handle.
+func (o *Product) SetModelG(ctx context.Context, insert bool, related *Model) error {
+	return o.SetModel(ctx, boil.GetContextDB(), insert, related)
+}
+
+// SetModel of the product to the related item.
+// Sets o.R.Model to related.
+// Adds o to related.R.Products.
+func (o *Product) SetModel(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Model) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"model_id"}),
+		strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.ModelID = related.ID
+	if o.R == nil {
+		o.R = &productR{
+			Model: related,
+		}
+	} else {
+		o.R.Model = related
+	}
+
+	if related.R == nil {
+		related.R = &modelR{
 			Products: ProductSlice{o},
 		}
 	} else {

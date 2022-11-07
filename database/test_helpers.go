@@ -41,12 +41,10 @@ func randomProduct() models.Product {
 	randomSku := randomString(5, charset)
 
 	p := models.Product{
-		CompanyID:  rand.Intn(10),
-		Sku:        randomSku,
-		Traits:     nullJSON,
-		CommonID:   16,
-		CategoryID: 17,
-		BrandID:    null.IntFrom(rand.Intn(20)),
+		CompanyID: rand.Intn(10),
+		Sku:       randomSku,
+		Traits:    nullJSON,
+		ModelID:   23,
 	}
 
 	return p

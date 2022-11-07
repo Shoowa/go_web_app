@@ -58,14 +58,14 @@ var BrandWhere = struct {
 
 // BrandRels is where relationship names are stored.
 var BrandRels = struct {
-	Products string
+	Models string
 }{
-	Products: "Products",
+	Models: "Models",
 }
 
 // brandR is where relationships are stored.
 type brandR struct {
-	Products ProductSlice `boil:"Products" json:"Products" toml:"Products" yaml:"Products"`
+	Models ModelSlice `boil:"Models" json:"Models" toml:"Models" yaml:"Models"`
 }
 
 // NewStruct creates a new relationship struct
@@ -73,11 +73,11 @@ func (*brandR) NewStruct() *brandR {
 	return &brandR{}
 }
 
-func (r *brandR) GetProducts() ProductSlice {
+func (r *brandR) GetModels() ModelSlice {
 	if r == nil {
 		return nil
 	}
-	return r.Products
+	return r.Models
 }
 
 // brandL is where Load methods for each relationship are stored.
@@ -202,23 +202,23 @@ func (q brandQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 	return count > 0, nil
 }
 
-// Products retrieves all the product's Products with an executor.
-func (o *Brand) Products(mods ...qm.QueryMod) productQuery {
+// Models retrieves all the model's Models with an executor.
+func (o *Brand) Models(mods ...qm.QueryMod) modelQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"alpha\".\"products\".\"brand_id\"=?", o.ID),
+		qm.Where("\"alpha\".\"models\".\"brand_id\"=?", o.ID),
 	)
 
-	return Products(queryMods...)
+	return Models(queryMods...)
 }
 
-// LoadProducts allows an eager lookup of values, cached into the
+// LoadModels allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (brandL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBrand interface{}, mods queries.Applicator) error {
+func (brandL) LoadModels(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBrand interface{}, mods queries.Applicator) error {
 	var slice []*Brand
 	var object *Brand
 
@@ -258,7 +258,7 @@ func (brandL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
@@ -272,8 +272,8 @@ func (brandL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular
 	}
 
 	query := NewQuery(
-		qm.From(`alpha.products`),
-		qm.WhereIn(`alpha.products.brand_id in ?`, args...),
+		qm.From(`alpha.models`),
+		qm.WhereIn(`alpha.models.brand_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -281,26 +281,26 @@ func (brandL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load products")
+		return errors.Wrap(err, "failed to eager load models")
 	}
 
-	var resultSlice []*Product
+	var resultSlice []*Model
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice products")
+		return errors.Wrap(err, "failed to bind eager loaded slice models")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on products")
+		return errors.Wrap(err, "failed to close results in eager load on models")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for products")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for models")
 	}
 
 	if singular {
-		object.R.Products = resultSlice
+		object.R.Models = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &productR{}
+				foreign.R = &modelR{}
 			}
 			foreign.R.Brand = object
 		}
@@ -309,10 +309,10 @@ func (brandL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.BrandID) {
-				local.R.Products = append(local.R.Products, foreign)
+			if local.ID == foreign.BrandID {
+				local.R.Models = append(local.R.Models, foreign)
 				if foreign.R == nil {
-					foreign.R = &productR{}
+					foreign.R = &modelR{}
 				}
 				foreign.R.Brand = local
 				break
@@ -323,32 +323,32 @@ func (brandL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
-// AddProductsG adds the given related objects to the existing relationships
+// AddModelsG adds the given related objects to the existing relationships
 // of the brand, optionally inserting them as new records.
-// Appends related to o.R.Products.
+// Appends related to o.R.Models.
 // Sets related.R.Brand appropriately.
 // Uses the global database handle.
-func (o *Brand) AddProductsG(ctx context.Context, insert bool, related ...*Product) error {
-	return o.AddProducts(ctx, boil.GetContextDB(), insert, related...)
+func (o *Brand) AddModelsG(ctx context.Context, insert bool, related ...*Model) error {
+	return o.AddModels(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// AddProducts adds the given related objects to the existing relationships
+// AddModels adds the given related objects to the existing relationships
 // of the brand, optionally inserting them as new records.
-// Appends related to o.R.Products.
+// Appends related to o.R.Models.
 // Sets related.R.Brand appropriately.
-func (o *Brand) AddProducts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Product) error {
+func (o *Brand) AddModels(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Model) error {
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.BrandID, o.ID)
+			rel.BrandID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
+				"UPDATE \"alpha\".\"models\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"brand_id"}),
-				strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, modelPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -361,120 +361,27 @@ func (o *Brand) AddProducts(ctx context.Context, exec boil.ContextExecutor, inse
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			queries.Assign(&rel.BrandID, o.ID)
+			rel.BrandID = o.ID
 		}
 	}
 
 	if o.R == nil {
 		o.R = &brandR{
-			Products: related,
+			Models: related,
 		}
 	} else {
-		o.R.Products = append(o.R.Products, related...)
+		o.R.Models = append(o.R.Models, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &productR{
+			rel.R = &modelR{
 				Brand: o,
 			}
 		} else {
 			rel.R.Brand = o
 		}
 	}
-	return nil
-}
-
-// SetProductsG removes all previously related items of the
-// brand replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Brand's Products accordingly.
-// Replaces o.R.Products with related.
-// Sets related.R.Brand's Products accordingly.
-// Uses the global database handle.
-func (o *Brand) SetProductsG(ctx context.Context, insert bool, related ...*Product) error {
-	return o.SetProducts(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// SetProducts removes all previously related items of the
-// brand replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Brand's Products accordingly.
-// Replaces o.R.Products with related.
-// Sets related.R.Brand's Products accordingly.
-func (o *Brand) SetProducts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Product) error {
-	query := "update \"alpha\".\"products\" set \"brand_id\" = null where \"brand_id\" = $1"
-	values := []interface{}{o.ID}
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, query)
-		fmt.Fprintln(writer, values)
-	}
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.Products {
-			queries.SetScanner(&rel.BrandID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.Brand = nil
-		}
-		o.R.Products = nil
-	}
-
-	return o.AddProducts(ctx, exec, insert, related...)
-}
-
-// RemoveProductsG relationships from objects passed in.
-// Removes related items from R.Products (uses pointer comparison, removal does not keep order)
-// Sets related.R.Brand.
-// Uses the global database handle.
-func (o *Brand) RemoveProductsG(ctx context.Context, related ...*Product) error {
-	return o.RemoveProducts(ctx, boil.GetContextDB(), related...)
-}
-
-// RemoveProducts relationships from objects passed in.
-// Removes related items from R.Products (uses pointer comparison, removal does not keep order)
-// Sets related.R.Brand.
-func (o *Brand) RemoveProducts(ctx context.Context, exec boil.ContextExecutor, related ...*Product) error {
-	if len(related) == 0 {
-		return nil
-	}
-
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.BrandID, nil)
-		if rel.R != nil {
-			rel.R.Brand = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("brand_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.Products {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.Products)
-			if ln > 1 && i < ln-1 {
-				o.R.Products[i] = o.R.Products[ln-1]
-			}
-			o.R.Products = o.R.Products[:ln-1]
-			break
-		}
-	}
-
 	return nil
 }
 

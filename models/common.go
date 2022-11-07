@@ -58,14 +58,14 @@ var CommonWhere = struct {
 
 // CommonRels is where relationship names are stored.
 var CommonRels = struct {
-	Products string
+	Models string
 }{
-	Products: "Products",
+	Models: "Models",
 }
 
 // commonR is where relationships are stored.
 type commonR struct {
-	Products ProductSlice `boil:"Products" json:"Products" toml:"Products" yaml:"Products"`
+	Models ModelSlice `boil:"Models" json:"Models" toml:"Models" yaml:"Models"`
 }
 
 // NewStruct creates a new relationship struct
@@ -73,11 +73,11 @@ func (*commonR) NewStruct() *commonR {
 	return &commonR{}
 }
 
-func (r *commonR) GetProducts() ProductSlice {
+func (r *commonR) GetModels() ModelSlice {
 	if r == nil {
 		return nil
 	}
-	return r.Products
+	return r.Models
 }
 
 // commonL is where Load methods for each relationship are stored.
@@ -202,23 +202,23 @@ func (q commonQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (boo
 	return count > 0, nil
 }
 
-// Products retrieves all the product's Products with an executor.
-func (o *Common) Products(mods ...qm.QueryMod) productQuery {
+// Models retrieves all the model's Models with an executor.
+func (o *Common) Models(mods ...qm.QueryMod) modelQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"alpha\".\"products\".\"common_id\"=?", o.ID),
+		qm.Where("\"alpha\".\"models\".\"common_id\"=?", o.ID),
 	)
 
-	return Products(queryMods...)
+	return Models(queryMods...)
 }
 
-// LoadProducts allows an eager lookup of values, cached into the
+// LoadModels allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (commonL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCommon interface{}, mods queries.Applicator) error {
+func (commonL) LoadModels(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCommon interface{}, mods queries.Applicator) error {
 	var slice []*Common
 	var object *Common
 
@@ -272,8 +272,8 @@ func (commonL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singula
 	}
 
 	query := NewQuery(
-		qm.From(`alpha.products`),
-		qm.WhereIn(`alpha.products.common_id in ?`, args...),
+		qm.From(`alpha.models`),
+		qm.WhereIn(`alpha.models.common_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -281,26 +281,26 @@ func (commonL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singula
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load products")
+		return errors.Wrap(err, "failed to eager load models")
 	}
 
-	var resultSlice []*Product
+	var resultSlice []*Model
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice products")
+		return errors.Wrap(err, "failed to bind eager loaded slice models")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on products")
+		return errors.Wrap(err, "failed to close results in eager load on models")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for products")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for models")
 	}
 
 	if singular {
-		object.R.Products = resultSlice
+		object.R.Models = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &productR{}
+				foreign.R = &modelR{}
 			}
 			foreign.R.Common = object
 		}
@@ -310,9 +310,9 @@ func (commonL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singula
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.ID == foreign.CommonID {
-				local.R.Products = append(local.R.Products, foreign)
+				local.R.Models = append(local.R.Models, foreign)
 				if foreign.R == nil {
-					foreign.R = &productR{}
+					foreign.R = &modelR{}
 				}
 				foreign.R.Common = local
 				break
@@ -323,20 +323,20 @@ func (commonL) LoadProducts(ctx context.Context, e boil.ContextExecutor, singula
 	return nil
 }
 
-// AddProductsG adds the given related objects to the existing relationships
+// AddModelsG adds the given related objects to the existing relationships
 // of the common, optionally inserting them as new records.
-// Appends related to o.R.Products.
+// Appends related to o.R.Models.
 // Sets related.R.Common appropriately.
 // Uses the global database handle.
-func (o *Common) AddProductsG(ctx context.Context, insert bool, related ...*Product) error {
-	return o.AddProducts(ctx, boil.GetContextDB(), insert, related...)
+func (o *Common) AddModelsG(ctx context.Context, insert bool, related ...*Model) error {
+	return o.AddModels(ctx, boil.GetContextDB(), insert, related...)
 }
 
-// AddProducts adds the given related objects to the existing relationships
+// AddModels adds the given related objects to the existing relationships
 // of the common, optionally inserting them as new records.
-// Appends related to o.R.Products.
+// Appends related to o.R.Models.
 // Sets related.R.Common appropriately.
-func (o *Common) AddProducts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Product) error {
+func (o *Common) AddModels(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Model) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -346,9 +346,9 @@ func (o *Common) AddProducts(ctx context.Context, exec boil.ContextExecutor, ins
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"alpha\".\"products\" SET %s WHERE %s",
+				"UPDATE \"alpha\".\"models\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"common_id"}),
-				strmangle.WhereClause("\"", "\"", 2, productPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, modelPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -367,15 +367,15 @@ func (o *Common) AddProducts(ctx context.Context, exec boil.ContextExecutor, ins
 
 	if o.R == nil {
 		o.R = &commonR{
-			Products: related,
+			Models: related,
 		}
 	} else {
-		o.R.Products = append(o.R.Products, related...)
+		o.R.Models = append(o.R.Models, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &productR{
+			rel.R = &modelR{
 				Common: o,
 			}
 		} else {
