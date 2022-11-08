@@ -78,3 +78,15 @@ func CreateProduct(creq context.Context, db *sql.DB, product models.Product) err
 	err := product.Insert(creq, db, boil.Infer())
 	return err
 }
+
+func FindProductsExcludeCompanyId(creq context.Context, db *sql.DB, companyID int) (models.ProductSlice, error) {
+	products, err := models.Products(
+		models.ProductWhere.CompanyID.NEQ(companyID),
+	).All(creq, db)
+
+	if len(products) == 0 {
+		return nil, nil
+	}
+
+	return products, err
+}
