@@ -26,9 +26,16 @@ loadmodule /Users/[myName]/oss/RedisJSON/target/release/librejson.dylib
 
 ### Postgres
 1. The development instance of Postgres currently resides in the AWS VPC. Draft a _~/.pgpass_ file containing `host:port:dbName:dbUser:pw`.
-2. Add `export DBSTRING="user=[dbUser] host=[host] port=[port] dbname=[dbName]"` to the interactive shell configuration.
 
-The application will use _DBSTRING_ to find the relevant password written in _~/.pgpass_.
+#### Postgres environmental variables
+| VAR | TYPE | EXAMPLE |
+| --- | --- | --- |
+| BROKER_DBUSER | string | "alexander" |
+| BROKER_DBHOST | string | "localhost" |
+| BROKER_DBPORT | string | "60000" |
+| BROKER_DBNAME | string | "stuff" |
+
+The application will form a string from the environmental variables and use the string to connect to the database. It will find the relevant password written in _~/.pgpass_.
 
 ### Application Middleware
 The middleware can be developed and run using the following environmental variable.
