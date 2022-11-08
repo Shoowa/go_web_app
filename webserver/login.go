@@ -1,6 +1,8 @@
 package webserver
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	"time"
 
@@ -59,8 +61,14 @@ func (e *Env) MWcheckOTP(c *gin.Context) {
 
 	// Abort request when OTP Secret can't be read from DB.
 	if errOTP != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": errOTP.Error()})
-		return
+		switch {
+		case errors.Is(errOTP, sql.ErrNoRows):
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Verified subject failed to earn secret."})
+			return
+		default:
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": errOTP.Error()})
+			return
+		}
 	}
 
 	// Compare submitted code to OTP Secret.
