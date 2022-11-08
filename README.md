@@ -36,3 +36,8 @@ The middleware can be developed and run using the following environmental variab
 ```bash
 ~/asymblur/broker $ ENVIRON=dev go run main.go
 ```
+
+#### Router environmental variables
+| VAR | VALUE |
+| --- | --- |
+| APP_PROXIES | "127.0.0.1/32,XXX.XX.XX.XX/24,XXX.X.X.X/24"

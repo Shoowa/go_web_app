@@ -2,31 +2,27 @@ package webserver
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/Shoowa/broker.git/security"
+	"github.com/caarlos0/env"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/sessions"
 	redisJSON "github.com/nitishm/go-rejson/v4"
 )
 
-func proxies() []string {
-	environ := os.Getenv("ENVIRON")
-	var p []string
+type config struct {
+	Proxies []string `env:"APP_PROXIES,required" envSeparator:","  envDefault:"127.0.0.1"`
+}
 
-	if environ == "dev" {
-		p = append(p, "127.0.0.1")
-	} else {
-		p = append(p,
-			"10.0.48.0/24",
-			"10.0.49.0/24",
-			"10.0.50.0/24",
-		)
+func readConfig() config {
+	cfg := config{}
+	if env.Parse(&cfg) != nil {
+		log.Fatal("Error parsing environ variables for router configuration.")
 	}
-
-	return p
+	return cfg
 }
 
 func Health(c *gin.Context) {
@@ -41,7 +37,7 @@ type Env struct {
 }
 
 func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engine {
-	p := proxies()
+	cfg := readConfig()
 
 	env := &Env{
 		db:         db,
@@ -51,7 +47,7 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 	}
 
 	r := gin.Default()
-	r.SetTrustedProxies(p)
+	r.SetTrustedProxies(cfg.Proxies)
 
 	r.GET("/health", Health)
 
