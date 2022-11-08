@@ -9,8 +9,7 @@ import (
 )
 
 func main() {
-	c := data.DefineConfig()
-	db := c.Access()
+	db := data.Access()
 	red := cache.Setup()
 	redjson := cache.SetupRedisJSONClient(red)
 
