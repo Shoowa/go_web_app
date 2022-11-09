@@ -9,8 +9,7 @@ import (
 )
 
 func TestCreateCompany(t *testing.T) {
-	c := DefineConfig()
-	db := c.Access()
+	db := Access()
 
 	newCompany := randomCompany()
 	err := CreateCompany(context.Background(), db, newCompany)

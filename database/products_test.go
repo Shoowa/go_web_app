@@ -22,8 +22,7 @@ var items = []stuff{
 }
 
 func TestReadProducts(t *testing.T) {
-	c := DefineConfig()
-	db := c.Access()
+	db := Access()
 
 	catalog, _ := ReadProducts(context.Background(), db)
 
@@ -38,8 +37,7 @@ func TestReadProducts(t *testing.T) {
 }
 
 func TestReadProductsFromCompany(t *testing.T) {
-	c := DefineConfig()
-	db := c.Access()
+	db := Access()
 
 	catalog, _ := ReadProductsFromCompany(context.Background(), db, "Frenchy Laundering")
 
@@ -55,8 +53,7 @@ func TestReadProductsFromCompany(t *testing.T) {
 }
 
 func TestFindProductsByCompanyId(t *testing.T) {
-	c := DefineConfig()
-	db := c.Access()
+	db := Access()
 
 	products, _ := FindProductsByCompanyId(context.Background(), db, 12)
 
@@ -66,8 +63,7 @@ func TestFindProductsByCompanyId(t *testing.T) {
 }
 
 func TestCreateProduct(t *testing.T) {
-	c := DefineConfig()
-	db := c.Access()
+	db := Access()
 
 	newProduct := randomProduct()
 	err := CreateProduct(context.Background(), db, newProduct)

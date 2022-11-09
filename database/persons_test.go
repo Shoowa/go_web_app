@@ -9,8 +9,7 @@ import (
 )
 
 func TestCreatePerson(t *testing.T) {
-	c := DefineConfig()
-	db := c.Access()
+	db := Access()
 
 	newPerson := randomPerson()
 	err := CreatePerson(context.Background(), db, newPerson)
