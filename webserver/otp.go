@@ -28,22 +28,22 @@ func (e *Env) MWisEmailVerified(c *gin.Context) {
 	personEmail := c.GetString("email")
 
 	// Find ID by email
-	person, err := data.FindPersonByEmail(c.Request.Context(), e.db, personEmail)
-	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+	person, personErr := data.FindPersonByEmail(c.Request.Context(), e.db, personEmail)
+	if personErr != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": personErr.Error()})
 		return
 	}
 
 	// Is this email verified?
-	verified, err2 := data.IsEmailVerified(c.Request.Context(), e.db, person.ID)
-	if err2 != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+	verified, verErr := data.IsEmailVerified(c.Request.Context(), e.db, person.ID)
+	if verErr != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": verErr.Error()})
 		return
 	}
 
 	// Abort request when e-mail remains unverified.
 	if verified == false {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"msg": "Subject's e-mail unverified."})
 		return
 	}
 
@@ -56,7 +56,7 @@ func (e *Env) MWdoYouHaveOTP(c *gin.Context) {
 	exist, err := data.OtpSecretExists(c.Request.Context(), e.db, personEmail)
 
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -73,13 +73,13 @@ func (e *Env) MWcreateOTP(c *gin.Context) {
 
 	key, keyErr := security.GenerateKey(personEmail)
 	if keyErr != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": keyErr.Error()})
 		return
 	}
 
 	creationErr := data.CreateOtpKey(c.Request.Context(), e.db, personEmail, key.Secret())
 	if creationErr != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": creationErr.Error()})
 		return
 	}
 
@@ -90,14 +90,14 @@ func (e *Env) MWcreateOTP(c *gin.Context) {
 func (e *Env) MWshowOTP(c *gin.Context) {
 	keyString, exists := c.Get("otpKey")
 	if exists == false {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "Gin Middleware lost OTP Key."})
 		return
 	}
 
 	key := keyString.(*otp.Key)
 	img, qrErr := security.CreateQR(key)
 	if qrErr != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": qrErr.Error()})
 		return
 	}
 

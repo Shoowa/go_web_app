@@ -49,8 +49,7 @@ func (e *Env) SignupCompanyPOST(c *gin.Context) {
 func (e *Env) MWreadSubmission(c *gin.Context) {
 	var combo Combination
 	if err := c.ShouldBindJSON(&combo); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -63,8 +62,7 @@ func (e *Env) MWreadSubmission(c *gin.Context) {
 func (e *Env) MWregisterCompany(c *gin.Context) {
 	company, ok := c.Get("company")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing company info for creation"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing company info for creation"})
 		return
 	}
 	companyInfo := company.(requestCreateCompany)
@@ -85,8 +83,7 @@ func (e *Env) MWregisterCompany(c *gin.Context) {
 
 	err := data.CreateCompany(c.Request.Context(), e.db, freshCompany)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -96,8 +93,7 @@ func (e *Env) MWregisterCompany(c *gin.Context) {
 func (e *Env) MWfindCompanyID(c *gin.Context) {
 	company, ok := c.Get("company")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing company info for selection"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing company info for selection"})
 		return
 	}
 
@@ -106,8 +102,7 @@ func (e *Env) MWfindCompanyID(c *gin.Context) {
 	// query company by name for ID
 	companyID, err := data.FindCompanyIDByName(c.Request.Context(), e.db, companyInfo.Name, companyInfo.State)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -118,8 +113,7 @@ func (e *Env) MWfindCompanyID(c *gin.Context) {
 func (e *Env) MWregisterPerson(c *gin.Context) {
 	person, ok := c.Get("person")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing person info"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing person info"})
 		return
 	}
 
@@ -127,8 +121,7 @@ func (e *Env) MWregisterPerson(c *gin.Context) {
 
 	companyID, ok := c.Get("companyID")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing companyID info"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing companyID info"})
 		return
 	}
 
@@ -142,8 +135,7 @@ func (e *Env) MWregisterPerson(c *gin.Context) {
 
 	personErr := data.CreatePerson(c.Request.Context(), e.db, freshPerson)
 	if personErr != nil {
-		c.Status(http.StatusInternalServerError)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": personErr.Error()})
 		return
 	}
 
@@ -154,8 +146,7 @@ func (e *Env) MWregisterPerson(c *gin.Context) {
 func (e *Env) MWdigestPW(c *gin.Context) {
 	pw, ok := c.Get("password")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing password info"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing password info"})
 		return
 	}
 
@@ -163,8 +154,7 @@ func (e *Env) MWdigestPW(c *gin.Context) {
 
 	hash, err := security.HashPW(reqPW.PW)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -175,15 +165,13 @@ func (e *Env) MWdigestPW(c *gin.Context) {
 func (e *Env) MWregisterPWDigest(c *gin.Context) {
 	pwDigest, ok := c.Get("pwdigest")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing pwdigest info"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing pwdigest info"})
 		return
 	}
 
 	email, ok := c.Get("email")
 	if ok == false {
-		c.JSON(http.StatusNoContent, gin.H{"msg": "missing email info"})
-		c.AbortWithStatus(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, gin.H{"msg": "missing email info"})
 		return
 	}
 
@@ -194,8 +182,7 @@ func (e *Env) MWregisterPWDigest(c *gin.Context) {
 
 	digestErr := data.CreateDigest(c.Request.Context(), e.db, freshDigest)
 	if digestErr != nil {
-		c.Status(http.StatusInternalServerError)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": digestErr.Error()})
 		return
 	}
 
