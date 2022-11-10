@@ -90,6 +90,7 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 		authn.POST("/product", env.CreateProductPOST)
 		authn.GET("/myproducts", env.MyProductsGET)
 		authn.GET("/models/:code/products", env.FindActiveProductsByModelCodeGET)
+		authn.POST("/model", env.CreateModelPOST)
 	}
 
 	return r
