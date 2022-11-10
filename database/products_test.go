@@ -78,3 +78,15 @@ func TestCreateProduct(t *testing.T) {
 	assert.Equal(t, product.Sku, newProduct.Sku)
 
 }
+
+func TestFindActiveProductsByModelCode(t *testing.T) {
+	db := Access()
+
+	modelCode := "B2MMRED2015"
+
+	products, _ := FindActiveProductsByModelCode(context.Background(), db, modelCode)
+
+	for _, product := range products {
+		assert.NotEqual(t, product.Active, false)
+	}
+}

@@ -90,3 +90,19 @@ func FindProductsExcludeCompanyId(creq context.Context, db *sql.DB, companyID in
 
 	return products, err
 }
+
+func FindActiveProductsByModelCode(creq context.Context, db *sql.DB, modelCode string) (models.ProductSlice, error) {
+	relatedProduct := models.ModelRels.Products
+	activeProduct := models.ProductWhere.Active.EQ(true)
+
+	model, err := models.Models(
+		models.ModelWhere.Code.EQ(modelCode),
+		Load(Rels(relatedProduct), activeProduct),
+	).One(creq, db)
+
+	if model == nil {
+		return nil, nil
+	}
+
+	return model.R.Products, err
+}

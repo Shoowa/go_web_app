@@ -114,3 +114,20 @@ func (e *Env) MyProductsGET(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, catalog)
 }
+
+func (e *Env) FindActiveProductsByModelCodeGET(c *gin.Context) {
+	modelCode := c.Param("code")
+
+	catalog, err := data.FindActiveProductsByModelCode(c.Request.Context(), e.db, modelCode)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": err.Error()})
+		return
+	}
+
+	if catalog == nil {
+		c.JSON(http.StatusNoContent, gin.H{"msg": "No items available."})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, catalog)
+}
