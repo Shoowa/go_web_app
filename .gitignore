@@ -16,3 +16,6 @@ vendor/
 
 # Executable
 broker.git
+
+# Generate file.
+cookie_gen.go

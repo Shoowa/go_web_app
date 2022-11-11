@@ -1,8 +1,9 @@
 package security
 
+//go:generate go run gen.go
+
 import (
 	"net/http"
-	"os"
 
 	"github.com/Shoowa/broker.git/models"
 	"github.com/google/uuid"
@@ -64,14 +65,4 @@ func CookieAuthKey() []byte {
 
 func CookieEncryptionKey() []byte {
 	return securecookie.GenerateRandomKey(32)
-}
-
-func SecureCookieStore() *sessions.CookieStore {
-	if os.Getenv("ENVIRON") == "dev" {
-		return createCookieStore(CookieAuthKey(), CookieEncryptionKey())
-	} else {
-		auth := []byte(os.Getenv("COOKIE_AUTH"))
-		encrypt := []byte(os.Getenv("COOKIE_ENCRYPT"))
-		return createCookieStore(auth, encrypt)
-	}
 }

@@ -44,6 +44,14 @@ The middleware can be developed and run using the following environmental variab
 ~/asymblur/broker $ ENVIRON=dev go run main.go
 ```
 
+#### Local Development with a SecureCookie
+Generate a set of codes for a SecureCookie. Any sessions stowed in the local _Redis_ cache will remain compliant with a re-initialized application that relies
+on the generated file containing the set of codes.
+
+```bash
+~/asymblur/broker $ go generate ./security
+```
+
 #### Router environmental variables
 | VAR | VALUE |
 | --- | --- |
