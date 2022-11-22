@@ -93,6 +93,7 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 		authn.GET("/models/:categoryID/:brandID", env.FindModelsByCategoryIDAndBrandIDGET)
 		authn.POST("/model", env.CreateModelPOST)
 		authn.GET("/categories", env.FindAllCategoriesGET)
+		authn.GET("/brands", env.FindAllBrandsGET)
 	}
 
 	return r
