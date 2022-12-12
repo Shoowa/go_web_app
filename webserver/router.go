@@ -79,6 +79,10 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 			env.MWcheckOTP,
 			env.MWwriteSessionIntoRedis,
 		)
+		v0.GET("/states", env.FindAllStatesGET)
+		v0.GET("/state/:id/counties", env.FindCountiesByStateIDGET)
+		v0.GET("/county/:id/munis", env.FindMunisByCountyIDGET)
+		v0.GET("/orgs", env.FindAllOrgsGET)
 
 		authn := v0.Group("/au", env.AuthN)
 
