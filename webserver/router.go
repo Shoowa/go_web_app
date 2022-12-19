@@ -48,6 +48,7 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 
 	r := gin.Default()
 	r.SetTrustedProxies(cfg.Proxies)
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	r.GET("/health", Health)
 
@@ -99,6 +100,7 @@ func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engi
 		authn.GET("/categories", env.FindAllCategoriesGET)
 		authn.GET("/brands", env.FindAllBrandsGET)
 		authn.GET("/brands/category/:id", env.FindBrandsRelatedToModelIDGET)
+		authn.POST("/upload/favorite/products", env.BulkCsvPOST)
 	}
 
 	return r
