@@ -1,37 +1,42 @@
 package cache
 
 import (
-	"os"
+	"log"
 
+	"github.com/caarlos0/env/v6"
 	"github.com/go-redis/redis/v8"
 	redisJSON "github.com/nitishm/go-rejson/v4"
 )
 
 const dot = "."
 
-func config() redis.Options {
-	if os.Getenv("ENVIRON") == "dev" {
-		return redis.Options{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       0,
-		}
-	}
+type config struct {
+	Host  string `env:"CACHE_HOST,notEmpty" envDefault:"localhost"`
+	Port  string `env:"CACHE_PORT,notEmpty" envDefault:"6379"`
+	Pw    string `env:"CACHE_PW,required" envDefault:""`
+	DbNum int    `env:"CACHE_NUM,notEmpty" envDefault:"0"`
+}
 
-	host := os.Getenv("CACHEHOST")
-	port := os.Getenv("CACHEPORT")
-	pw := os.Getenv("CACHEPW")
-	db := 0
+func readConfig() config {
+	cfg := config{}
+	if env.Parse(&cfg) != nil {
+		log.Fatal("Error parsing environ variables for Cache configuration.")
+	}
+	return cfg
+}
+
+func adaptConfig() redis.Options {
+	c := readConfig()
 
 	return redis.Options{
-		Addr:     host + ":" + port,
-		Password: pw,
-		DB:       db,
+		Addr:     c.Host + ":" + c.Port,
+		Password: c.Pw,
+		DB:       c.DbNum,
 	}
 }
 
 func Setup() *redis.Client {
-	c := config()
+	c := adaptConfig()
 	return redis.NewClient(&c)
 }
 
