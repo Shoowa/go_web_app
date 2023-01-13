@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Shoowa/broker.git/security"
+	aws "github.com/aws/aws-sdk-go/aws/session"
 	"github.com/caarlos0/env"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
@@ -36,14 +37,15 @@ type Env struct {
 	cookieShop *sessions.CookieStore
 }
 
-func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler) *gin.Engine {
+func NewRouter(db *sql.DB, red *redis.Client, redj *redisJSON.Handler, awsSess *aws.Session) *gin.Engine {
 	cfg := readConfig()
+	svcSM := security.SvcSecretsManager(awsSess)
 
 	env := &Env{
 		db:         db,
 		cache:      red,
 		cacheJSON:  redj,
-		cookieShop: security.SecureCookieStore(),
+		cookieShop: security.SecureCookieStore(&svcSM),
 	}
 
 	r := gin.Default()
