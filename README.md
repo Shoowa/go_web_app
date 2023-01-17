@@ -78,3 +78,15 @@ webserver. A session ID is written into the cookie.
 | VAR | VALUE |
 | --- | --- |
 | APP_PROXIES | "127.0.0.1/32,XXX.XX.XX.XX/24,XXX.X.X.X/24"
+
+
+## Container
+
+#### Development
+The container needs access to the localhost to connect to a development database and cache, and the localhost is defined differently in a MacOS environment.
+Invoke the environ variables defined on the host to supplement the environ variables added to the _Dockerfile_.
+
+```bash
+~/broker $ docker build -t repo/tag:version .
+~/broker $ docker run -it -d --rm -p 8080:8080 -e BROKER_DBPORT -e BROKER_DBNAME -e BROKER_DBUSER repo/tag:version
+```
