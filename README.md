@@ -5,11 +5,10 @@ Middleware that authenticates, authorizes, markets wares, and brokers transactio
 The application depends on a Redis cache and a Postgres database. The Redis cache needs a JSON module, and the Postgres database needs a GIS extension.
 
 ### Redis
-Clone the [RedisJSON](https://github.com/RedisJSON/RedisJSON#redisjson) project, compile the _Rust_ lib, and load the module into the Redis server. This document assumes Redis has been installed by
-_brew_ on MacOS, and that _Rust_ has also been installed.
+Clone the [RedisJSON](https://github.com/RedisJSON/RedisJSON#redisjson) project, compile the _Rust_ lib, and load the module into the Redis server. This
+document assumes Redis has been installed by _brew_ on MacOS, and that _Rust_ has also been installed.
 
 ```bash
-~/oss $ brew services stop redis
 ~/oss $ git clone git@github.com:RedisJSON/RedisJSON.git
 ~/oss $ cd RedisJSON
 ~/oss/RedisJSON $ cargo build --release
@@ -21,19 +20,20 @@ loadmodule /Users/[myName]/oss/RedisJSON/target/release/librejson.dylib
 ```
 
 ```bash
-~/ $ brew services start redis
+~/ $ brew services restart redis
 ```
 
 ### Postgres
-1. The development instance of Postgres currently resides in the AWS VPC. Draft a _~/.pgpass_ file containing `host:port:dbName:dbUser:pw`.
+Local development lacks a password. Prior local development needed a _~/.pgpass_, but recent re-configuration of _Broker_ abandoned the use of that file. The
+future deployment of _Broker_ as a container will use environ variables, and a call to AWS _Secrets_ for a database password.
 
 #### Postgres environmental variables
 | VAR | TYPE | EXAMPLE |
 | --- | --- | --- |
-| BROKER_DBUSER | string | "alexander" |
+| BROKER_DBUSER | string | "clerk" |
 | BROKER_DBHOST | string | "localhost" |
 | BROKER_DBPORT | string | "60000" |
-| BROKER_DBNAME | string | "stuff" |
+| BROKER_DBNAME | string | "omni" |
 
 The application will form a string from the environmental variables and use the string to connect to the database. It will find the relevant password written in _~/.pgpass_.
 
