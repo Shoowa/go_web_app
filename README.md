@@ -88,5 +88,5 @@ Invoke the environ variables defined on the host to supplement the environ varia
 
 ```bash
 ~/broker $ docker build -t repo/tag:version .
-~/broker $ docker run -it -d --rm -p 8080:8080 -e BROKER_DBPORT -e BROKER_DBNAME -e BROKER_DBUSER repo/tag:version
+~/broker $ docker run -it -d --rm -p 8080:8080 -e BROKER_DBPORT -e BROKER_DBNAME -e BROKER_DBUSER -e SECRET_COOKIE_AUTH -e SECRET_COOKIE_ENCRYPT repo/tag:version
 ```
